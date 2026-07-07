@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Bangkok Weed Shop Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<script src="config.js"></script>
+</head>
+<body>
+
+<!-- ===================== AUTH SCREEN ===================== -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-brand"><span class="dot"></span><span>Bangkok Weed Shop Tracker</span></div>
+
+    <!-- Login pane -->
+    <div id="loginPane">
+      <h1>Log in</h1>
+      <p class="sub">Use your username and 6-digit passcode.</p>
+      <div id="loginError" class="auth-error hidden"></div>
+      <form id="loginForm">
+        <div class="field">
+          <label>Username</label>
+          <input id="loginUsername" type="text" autocomplete="username" placeholder="e.g. admin" />
+        </div>
+        <div class="field">
+          <label>Passcode</label>
+          <input id="loginPasscode" type="password" inputmode="numeric" maxlength="6" pattern="\d{6}" data-passcode placeholder="••••••" />
+        </div>
+        <button type="submit" class="btn btn-primary">Log in</button>
+      </form>
+      <div class="auth-footer">
+        <button id="showRegister" class="btn-text">New here? Create an account →</button>
+      </div>
+    </div>
+
+    <!-- Register pane -->
+    <div id="registerPane" class="hidden">
+      <h1>Create account</h1>
+      <p class="sub">Pick a username and a 6-digit passcode you'll remember.</p>
+      <div id="regError" class="auth-error hidden"></div>
+      <form id="registerForm">
+        <div class="field">
+          <label>Username</label>
+          <input id="regUsername" type="text" autocomplete="username" placeholder="e.g. jordan" />
+        </div>
+        <div class="field">
+          <label>Passcode (6 digits)</label>
+          <input id="regPasscode" type="password" inputmode="numeric" maxlength="6" pattern="\d{6}" data-passcode placeholder="••••••" />
+        </div>
+        <div class="field">
+          <label>Confirm passcode</label>
+          <input id="regPasscodeConfirm" type="password" inputmode="numeric" maxlength="6" pattern="\d{6}" data-passcode placeholder="••••••" />
+        </div>
+        <button type="submit" class="btn btn-primary">Create account</button>
+      </form>
+      <div class="auth-footer">
+        <button id="showLogin" class="btn-text">← Back to log in</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== APP SHELL ===================== -->
+<div id="appShell" class="app-shell hidden">
+  <div class="topbar">
+    <div class="topbar-row">
+      <div class="brand"><span class="dot"></span> Weed Shop Tracker</div>
+      <div class="who" id="whoBox"></div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="sync-pill" id="syncPill"></span>
+        <button class="icon-btn" id="logoutBtn" title="Log out">⎋</button>
+      </div>
+    </div>
+    <div class="search-row">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="searchInput" type="text" placeholder="Search name or address…" />
+      </div>
+      <select id="districtSelect" class="district-select"></select>
+    </div>
+    <div class="chip-row" id="chipRow"></div>
+  </div>
+
+  <div class="stats-strip" id="statsStrip"></div>
+  <div class="districts" id="districts"></div>
+
+  <button class="fab" id="fabAdd" title="Add a shop">+</button>
+</div>
+
+<!-- ===================== ADD SHOP MODAL ===================== -->
+<div id="addModalOverlay" class="modal-overlay hidden">
+  <div class="modal">
+    <h2>Add a shop</h2>
+    <p class="sub">Manually add a shop that's missing from the list.</p>
+    <form id="addShopForm">
+      <div class="field"><label>Shop name *</label><input id="addName" required /></div>
+      <div class="grid2">
+        <div class="field"><label>Rating (0–5)</label><input id="addRating" type="number" min="0" max="5" step="0.1" /></div>
+        <div class="field"><label>District</label><input id="addDistrict" placeholder="e.g. Sukhumvit" /></div>
+      </div>
+      <div class="field"><label>Full address</label><input id="addAddress" /></div>
+      <div class="grid2">
+        <div class="field"><label>Phone</label><input id="addPhone" /></div>
+        <div class="field"><label>Email</label><input id="addEmail" type="email" /></div>
+      </div>
+      <div class="field"><label>Opening hours</label><input id="addHours" placeholder="e.g. Mon–Sun: 10am–10pm" /></div>
+      <div class="field"><label>Google Maps link</label><input id="addMaps" placeholder="https://maps.google.com/…" /></div>
+      <div class="field"><label>Website</label><input id="addWebsite" placeholder="https://…" /></div>
+      <div class="grid2">
+        <div class="field"><label>Instagram</label><input id="addInstagram" placeholder="https://instagram.com/…" /></div>
+        <div class="field"><label>Facebook</label><input id="addFacebook" placeholder="https://facebook.com/…" /></div>
+      </div>
+      <div class="field"><label>LINE</label><input id="addLine" placeholder="https://line.me/…" /></div>
+      <div class="modal-actions">
+        <button type="button" id="cancelAdd" class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add shop</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== DELETE CONFIRM MODAL ===================== -->
+<div id="deleteModalOverlay" class="modal-overlay hidden">
+  <div class="modal">
+    <h2>Delete this shop?</h2>
+    <p class="sub">This removes it for everyone syncing this tracker. This can't be undone.</p>
+    <div class="modal-actions">
+      <button type="button" id="cancelDelete" class="btn btn-ghost">Cancel</button>
+      <button type="button" id="confirmDelete" class="btn btn-danger">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
